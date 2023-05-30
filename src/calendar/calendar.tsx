@@ -201,6 +201,11 @@ const updateTaskWithChanges = (task: ITask, changes: ITask): ITask => {
     return newTask;
 }
 
+const getInitialScrollTopBasedOnCurrentTime = (): number => {
+    const { hour } = getCurrentTimeInHourAndMin();
+    return hour * 150;
+}
+
 const Calendar = () => {
 
     const { calendarData, storeOrUpdateTask } = useTaskStorage();
@@ -372,6 +377,7 @@ const Calendar = () => {
                         width={width}
                         itemCount={25}
                         itemSize={150}
+                        initialScrollOffset={getInitialScrollTopBasedOnCurrentTime()}
                     >
                         {Row}
                     </FixedSizeList>
