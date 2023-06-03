@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface CreateTaskProps {
-    onCreateTask: (identifier: string, title: string, description: string, date: string, time: string, color: string) => void;
+    onCreateTask: (identifier: string, title: string, description: string, date: string, time: string, color: string, oldTask: any) => void;
     onCompleteTask: (identifier: string, date: string) => void;
     identifier?: string;
     initialTitle?: string;
@@ -34,13 +34,16 @@ const CreateTask: React.FC<CreateTaskProps> = ({
     const colors = ['#2eab62', '#3f51b5', '#f44336', '#ff9800', '#607d8b'];
 
     const handleCreateTask = () => {
-        onCreateTask(identifier || '', title, description, date, time, selectedColor);
+        const oldTask: any = identifier !== '' ? {
+            oldTaskDate: initialDate
+        } : null;
+        onCreateTask(identifier || '', title, description, date, time, selectedColor, oldTask);
         resetInputs();
     };
 
     const handleCompleteTask = () => {
         if (completion) {
-            onCreateTask(identifier, title, description, date, time, selectedColor);
+            onCreateTask(identifier, title, description, date, time, selectedColor, null);
             setCompletion(false);
         } else {
             onCompleteTask(identifier, date);

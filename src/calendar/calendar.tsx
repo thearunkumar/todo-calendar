@@ -69,6 +69,23 @@ const StyledHeader = styled.header`
     justify-content: right;
     align-items: center;
     margin-right: 100px;
+
+    .task-create, .navigation {
+        border: 0;
+        font-size: 20px;
+        padding: 5px 10px;
+        margin: 0 10px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .task-create {
+        background: #ea4c89;
+    }
+
+    .navigation {
+        background: #000;
+    }
 `;
 
 const StyledCreateTaskModal = styled.div`
@@ -340,9 +357,9 @@ const Calendar = () => {
 
     return <StyledCalendarContainer>
         <StyledHeader>
-            <button onClick={onOpenCreateTask.bind(null, 'button')}>Create Task</button>
-            <button onClick={handleCalendarNavigation.bind(null, -1)}>Previous</button>
-            <button onClick={handleCalendarNavigation.bind(null, 1)}>Next</button>
+            <button className="task-create" onClick={onOpenCreateTask.bind(null, 'button')}>Create Task</button>
+            <button className="navigation" onClick={handleCalendarNavigation.bind(null, -1)}>&lt;</button>
+            <button className="navigation" onClick={handleCalendarNavigation.bind(null, 1)}>&gt;</button>
         </StyledHeader>
         {openCreateTask || Object.keys(focusedTask)?.length ? <StyledCreateTaskModal ref={modalRef}>
             <CloseButton onClick={onCloseCreateTask}>
@@ -350,7 +367,7 @@ const Calendar = () => {
             </CloseButton>
             <CreateTask identifier={focusedTask?.identifier || ''} initialCompletion={focusedTask?.status === 'Complete'} initialColor={focusedTask?.style?.bgColor || ''} initialDate={focusedTask?.when ? formatDate(focusedTask?.when) : ''} initialDescription={focusedTask?.description || ''} initialTime={focusedTask?.when ? getFormattedTime(focusedTask?.when) : ''} initialTitle={focusedTask?.title || ''} onCompleteTask={(identifier: string, date: string) => {
                 handleTaskCompletion(identifier, date);
-            }} onCreateTask={(identifier: string, title: string, description: string, date: string, time: string, color: string) => {
+            }} onCreateTask={(identifier: string, title: string, description: string, date: string, time: string, color: string, oldTask: any) => {
                 // HAndle deletion of the old task during the update flow.
                 const task: ITask = {
                     identifier: identifier || uuidv4(),
@@ -364,7 +381,11 @@ const Calendar = () => {
                     },
                 };
 
-                storeOrUpdateTask(task);
+                storeOrUpdateTask(task, oldTask?.oldTaskDate);
+
+                if (oldTask?.oldTaskDate) {
+                    onCloseCreateTask();
+                }
 
             }} />
         </StyledCreateTaskModal> : null}

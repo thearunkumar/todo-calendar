@@ -38,6 +38,7 @@ const StyledTask = styled.div`
     justify-content: space-evenly;
     width: 100%;
     height: 37.5px;
+    cursor: pointer;
 
     .title {
         max-width: 90%;

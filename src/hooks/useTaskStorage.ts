@@ -14,12 +14,28 @@ export const useTaskStorage = () => {
     }
   }, [calendarData]);
 
-  const storeOrUpdateTask = (task: ITask) => {
+  const getCalendarDataAfterDeletion = (task: ITask, oldTaskDate: string): typeof calendarData => {
+    const cacheCalendarData = {
+      ...calendarData
+    }
+    if (cacheCalendarData[oldTaskDate] && cacheCalendarData[oldTaskDate][task.identifier]) {
+      delete cacheCalendarData[oldTaskDate][task.identifier];
+    }
+
+    return cacheCalendarData;
+  }
+
+  const storeOrUpdateTask = (task: ITask, oldTaskDate?: string) => {
+    let updatedCalendarData: typeof calendarData = calendarData;
+    if (oldTaskDate) {
+      updatedCalendarData = getCalendarDataAfterDeletion(task, oldTaskDate);
+    }
+
     const dateKey = formatDate(task.when);
     const updatedTasks = {
-      ...calendarData,
+      ...updatedCalendarData,
       [dateKey]: {
-        ...(calendarData?.[dateKey] || {}),
+        ...(updatedCalendarData?.[dateKey] || {}),
         [task.identifier]: task,
       }
     };
@@ -34,77 +50,3 @@ export const useTaskStorage = () => {
     storeOrUpdateTask,
   };
 };
-
-// export const useTaskStorage = (initialData: any) => {
-//   const storedData = localStorage.getItem('calendarData');
-//   const initialCalendarData = storedData ? JSON.parse(storedData) : initialData;
-
-//   const [calendarData, setCalendarData] = useState<any>(initialCalendarData);
-
-//   useEffect(() => {
-//     localStorage.setItem('calendarData', JSON.stringify(calendarData));
-//   }, [calendarData]);
-
-//   const convertTimestampToDate = (data: any): any => {
-//     const convertedData: any = {};
-
-//     for (const dateKey in data) {
-//       const taskByDate = data[dateKey];
-//       const convertedTasks: { [taskId: string]: ITask } = {};
-
-//       for (const taskId in taskByDate.tasks) {
-//         const task = taskByDate.tasks[taskId];
-//         convertedTasks[taskId] = {
-//           ...task,
-//           when: new Date(task.when), // Convert timestamp to Date object
-//         };
-//       }
-
-//       convertedData[dateKey] = {
-//         ...taskByDate,
-//         tasks: convertedTasks,
-//       };
-//     }
-
-//     return convertedData;
-//   };
-
-//   const storeOrUpdateTask = (task: ITask) => {
-//     const dateKey = formatDate(task.when);
-//     const taskByDate: any = calendarData[dateKey] || {
-//       date: dateKey,
-//       tasks: {},
-//     };
-
-//     const updatedTask = {
-//       ...task,
-//       when: task.when.getTime(), // Convert Date object to timestamp
-//     };
-
-//     const updatedTasks = {
-//       ...taskByDate.tasks,
-//       [task.identifier]: updatedTask,
-//     };
-
-//     const updatedTaskByDate = {
-//       ...taskByDate,
-//       tasks: updatedTasks,
-//     };
-
-//     const updatedCalendarData = {
-//       ...calendarData,
-//       [dateKey]: updatedTaskByDate,
-//     };
-
-//     const convertedCalendarData = convertTimestampToDate(updatedCalendarData);
-
-//     setCalendarData(convertedCalendarData);
-//   };
-
-
-
-//   return {
-//     calendarData,
-//     storeOrUpdateTask,
-//   };
-// };
