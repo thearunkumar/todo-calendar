@@ -88,7 +88,7 @@ const TaskWidget = ({ identifier, title, description, status, when, showDescript
             date: when
         })
     }}>
-        <span><img src={TaskIcon} /></span>
+        <span><img alt="Task icon" src={TaskIcon} /></span>
         <span className="title">{title}</span>
         <span className="time">{formattedTime}</span>
     </StyledTask >

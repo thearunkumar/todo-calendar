@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
 import styled from 'styled-components';
-import { formatDate, get24HoursInADay, getCurrentTimeInHourAndMin, getDayInFull, getDaysOfWeekInView, getDummyTasks, getFormattedTime, getInTwoDigits, getTimeFromDate, isCurrentDate } from '../utils/utils';
+import { formatDate, get24HoursInADay, getCurrentTimeInHourAndMin, getDayInFull, getDaysOfWeekInView, getFormattedTime, getInTwoDigits, getTimeFromDate, isCurrentDate } from '../utils/utils';
 import CreateTask from './create-task';
 import CurrentTimeWidget from './widgets/current-time';
 import DayWidget from './widgets/day';
@@ -165,7 +165,7 @@ const Cell = ({ columnIndex, rowIndex, style, config, data, onTaskEvent }: any) 
     }
     const date = data.week[columnIndex % 8];
     const times = data.times[columnIndex];
-    const { hour, min } = getCurrentTimeInHourAndMin();
+    const { hour } = getCurrentTimeInHourAndMin();
     const isActiveDate = date ? date.getDate() === new Date().getDate() && rowIndex === 0 : false;
 
     return <StyledDiv key={`${columnIndex}-${rowIndex}`} data-active={isActiveDate}>
@@ -238,7 +238,7 @@ const Calendar = () => {
             ...config,
             tasks: calendarData
         })
-    }, [calendarData]);
+    }, [calendarData, config]);
 
     const [data, setData] = useState<any>();
 
@@ -260,13 +260,15 @@ const Calendar = () => {
         const data = getData(config);
         setData(data)
         handleData(data);
-    }, [])
+        // eslint-disable-next-line
+    }, [config])
 
     useEffect(() => {
         const data = getData(config);
         setData(data)
         handleData(data);
-    }, [config.active]);
+        // eslint-disable-next-line
+    }, [config.active, config]);
 
     const getPreviousAndNextDate = (date: Date, num: number) => {
         // Create a new Date object at the same time as the input date
